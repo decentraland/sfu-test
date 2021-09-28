@@ -23,13 +23,13 @@ const Home: React.FC = () => {
   useEffect(
     () => {
       const config: Client['config'] = { codec: 'vp8', iceServers: [{ urls: "stun:stun.l.google.com:19302" }]};
-      const signal = new IonSFUJSONRPCSignal('wss://f807-2800-810-503-618-1479-c59f-730f-8a92.ngrok.io/ws')
+      const signal = new IonSFUJSONRPCSignal('wss://comms-sfu.decentraland.io/ws')
       const client = new Client(signal, config)
 
       setClient(client)
 
       // Connect to channel
-      signal.onopen = () => client.join('test session', `username-${Date.now()}`)
+      signal.onopen = () => client.join('boedo-session', `username-${Date.now()}`)
 
       // "Handle" Errors
       signal.onerror = (error: unknown) => console.log({ error })
