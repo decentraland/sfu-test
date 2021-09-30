@@ -23,7 +23,8 @@ const Home: React.FC = () => {
   useEffect(
     () => {
       const config: Client['config'] = { codec: 'vp8', iceServers: [{ urls: "stun:stun.l.google.com:19302" }]};
-      const signal = new IonSFUJSONRPCSignal('wss://comms-sfu.decentraland.io/ws')
+      // const signal = new IonSFUJSONRPCSignal('wss://comms-sfu.decentraland.io/ws')
+      const signal = new IonSFUJSONRPCSignal('wss://sfu.decentraland.services/ws')
       const client = new Client(signal, config)
 
       setClient(client)
