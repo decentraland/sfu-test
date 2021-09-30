@@ -49,7 +49,13 @@ const Home: React.FC = () => {
   useEffect(
     () => {
       if (!client) return
-
+      // client.ondatachannel = ({ channel }) => {
+      //   channel.onmessage = ({ data }) => {
+      //     console.log(data)
+      //   }
+      // }
+      // const dataChanel = client.createDataChannel('data')
+      // dataChanel.send('hola - soy - random')
       client.ontrack = (track, stream) => {
         console.log('track, stream')
         track.onunmute = () => {
