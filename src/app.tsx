@@ -2,6 +2,7 @@ import React from 'react'
 import { IonSFUJSONRPCSignal } from 'ion-sdk-js/lib/signal/json-rpc-impl'
 import { Client, LocalStream, RemoteStream } from 'ion-sdk-js'
 import { Button, Card, Logo } from 'decentraland-ui'
+import { v4 as uuid } from 'uuid'
 
 import styles from './app.module.css'
 
@@ -10,7 +11,6 @@ import 'decentraland-ui/lib/dark-theme.css'
 
 import { useEffect, useState } from 'react'
 import Video from './components/video'
-
 
 const Home: React.FC = () => {
   const [client, setClient] = useState<Client>()
@@ -22,15 +22,21 @@ const Home: React.FC = () => {
 
   useEffect(
     () => {
-      const config: Client['config'] = { codec: 'vp8', iceServers: [{ urls: "stun:stun.l.google.com:19302" }]};
-      // const signal = new IonSFUJSONRPCSignal('wss://comms-sfu.decentraland.io/ws')
       const signal = new IonSFUJSONRPCSignal('wss://sfu.decentraland.services/ws')
-      const client = new Client(signal, config)
-
-      setClient(client)
+      const client = new Client(signal)
 
       // Connect to channel
-      signal.onopen = () => client.join('boedo-session', `username-${Date.now()}`)
+      signal.onopen = async () => {
+        setClient(client)
+        console.log('connecting to boedo')
+        try {
+          await client.join('boedo', uuid())
+        } catch(e) {
+          console.log({ e })
+        }
+
+        console.log('connected')
+      }
 
       // "Handle" Errors
       signal.onerror = (error: unknown) => console.log({ error })
@@ -45,6 +51,7 @@ const Home: React.FC = () => {
       if (!client) return
 
       client.ontrack = (track, stream) => {
+        console.log('track, stream')
         track.onunmute = () => {
           const remoteStream = remoteStreams.find(r => r.id === stream.id)
           if (!remoteStream) {
@@ -72,10 +79,12 @@ const Home: React.FC = () => {
     try {
       const localStream = await LocalStream.getUserMedia({
         resolution: 'hd',
-        simulcast: true,
         audio: true,
-        codec: 'vp8'
+        codec: 'vp8',
       })
+      localStream.unmute('audio')
+      localStream.unmute('video')
+      console.log('setmedia')
       setMedia(localStream)
       client?.publish(localStream)
     } catch (e) {
