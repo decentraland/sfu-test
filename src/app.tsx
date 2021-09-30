@@ -22,6 +22,7 @@ const Home: React.FC = () => {
 
   useEffect(
     () => {
+      // const signal = new IonSFUJSONRPCSignal('ws://localhost:7000/ws')
       const signal = new IonSFUJSONRPCSignal('wss://sfu.decentraland.services/ws')
       const client = new Client(signal)
 
@@ -34,7 +35,6 @@ const Home: React.FC = () => {
         } catch(e) {
           console.log({ e })
         }
-
         console.log('connected')
       }
 
@@ -82,9 +82,6 @@ const Home: React.FC = () => {
         audio: true,
         codec: 'vp8',
       })
-      localStream.unmute('audio')
-      localStream.unmute('video')
-      console.log('setmedia')
       setMedia(localStream)
       client?.publish(localStream)
     } catch (e) {
@@ -105,7 +102,7 @@ const Home: React.FC = () => {
       </div>
       <div className={styles.videoContainer}>
         <Card.Group>
-          {localStream && <Video key={localStream.id} value={localStream} />}
+          {localStream && <Video key={localStream.id} value={localStream} muted controls={false} />}
           {remoteStreams.map(stream => <Video value={stream} key={stream.id} />)}
         </Card.Group>
       </div>

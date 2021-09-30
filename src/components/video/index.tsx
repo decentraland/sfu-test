@@ -5,11 +5,11 @@ import { Card } from 'decentraland-ui'
 import styles from './video.module.css'
 
 
-type Props = {
+type Props = React.VideoHTMLAttributes<HTMLVideoElement> & {
   value: LocalStream | RemoteStream
 }
 
-const Video: React.FC<Props> = ({ value }) => {
+const Video: React.FC<Props> = ({ value, ...props }) => {
   useEffect(
     () => {
       if (!refVideo.current) return
@@ -25,7 +25,7 @@ const Video: React.FC<Props> = ({ value }) => {
           {value.id}
         </Card.Header>
         <Card.Meta>
-          <video className={styles.video} ref={refVideo} autoPlay controls />
+          <video className={styles.video} ref={refVideo} autoPlay controls {...props} />
         </Card.Meta>
       </Card.Content>
     </Card>
