@@ -10,6 +10,8 @@ type Events = {
   remoteStreams: RemoteStream[]
   error: Error | Event
   close: Event
+  connected: undefined
+  disconnect: undefined
 }
 
 type Callback<T> = (arg: T) => void
@@ -20,10 +22,10 @@ class Signal extends EventEmitter {
   private client!: Client
   private connected: boolean = false
   private uuid: string
-  reconnect: boolean
-  cbQueue: (() => void)[] = []
-  remoteStreams: RemoteStream[] = []
-  localStream: LocalStream | undefined
+  private reconnect: boolean
+  private cbQueue: (() => void)[] = []
+  private remoteStreams: RemoteStream[] = []
+  private localStream: LocalStream | undefined
 
   constructor(uri: string, uuid: string, opts?: Options) {
     super()
@@ -41,15 +43,22 @@ class Signal extends EventEmitter {
     this.signal.onclose = (err) => this.handleClose(err)
     this.signal.onerror = (event) => this.handleError(event)
     this.signal.onopen = () => this.handleOnOpen()
+
     this.handleTracks()
   }
 
   handleClose(event: Event) {
-    console.log('handleClose', event)
+    this.connected = false
+
+    this.client.close()
+    this.remoteStreams = []
+    this.localStream = undefined
     this._emit('close', event)
+
     // Todo handle reconnect with some better algorithm
     // but for now its ok.
     if (this.reconnect) {
+      console.log('reconnecting', event)
       setTimeout(() => this.connect(), 1000);
     }
   }
@@ -63,6 +72,7 @@ class Signal extends EventEmitter {
     console.log('connected')
     this.connected = true
     this.cbQueue.forEach(promise => promise())
+    this._emit('connected')
   }
 
   async joinRoom(sid: string) {
@@ -72,6 +82,7 @@ class Signal extends EventEmitter {
     }
 
     try {
+      console.log('trying to connect')
       await this.client.join(sid, this.uuid)
 
       console.log('joined room: ', sid)
@@ -87,6 +98,7 @@ class Signal extends EventEmitter {
       codec: 'vp8',
       video: false,
       simulcast: true,
+      sendEmptyOnMute: true,
       ...opts,
     })
 
@@ -104,26 +116,28 @@ class Signal extends EventEmitter {
     this.on(key, cb)
   }
 
-  _emit<T extends keyof Events>(key: T, value: Events[T]) {
+  _emit<T extends keyof Events>(key: T, value?: Events[T]) {
     this.emit(key, value)
   }
 
-  handleTracks() {
-    console.log('handle-tracks', this.client)
+  setRemoteStreams(remoteStreams: RemoteStream[]) {
+    this.remoteStreams = remoteStreams
+    this._emit('remoteStreams', this.remoteStreams)
+  }
 
+  handleTracks() {
     this.client.ontrack = (track, stream) => {
       console.log({ track, stream })
       track.onunmute = () => {
         const remoteStream = this.remoteStreams.find(r => r.id === stream.id)
         if (!remoteStream) {
           // Add remote stream to array
-          this.remoteStreams = this.remoteStreams.concat(stream)
-          this._emit('remoteStreams', this.remoteStreams)
+          this.setRemoteStreams(this.remoteStreams.concat(stream))
+
 
           // Find and remove remote stream
           stream.onremovetrack = () => {
-            this.remoteStreams = this.remoteStreams.filter(s => s.id !== stream.id)
-            this._emit('remoteStreams', this.remoteStreams)
+            this.setRemoteStreams(this.remoteStreams.filter(s => s.id !== stream.id))
           }
 
         }
@@ -131,6 +145,13 @@ class Signal extends EventEmitter {
     }
   }
 
+  getLocalStream () {
+    return this.localStream
+  }
+
+  getRemoteStreams () {
+    return this.remoteStreams
+  }
 }
 
 export default Signal

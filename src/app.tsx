@@ -15,21 +15,21 @@ const Home: React.FC = () => {
   const [signal, setSignal] = useState<Signal>()
   const [remoteStreams, setRemoteStreams] = useState<RemoteStream[]>([])
   const [localStream, setLocalStream] = useState<LocalStream>()
-
   useEffect(
     () => {
-      const signal = new Signal('wss://sfu.decentraland.services/ws', uuid())
-      signal.joinRoom('boedo')
-      signal._on('remoteStreams', setRemoteStreams)
+      const signal = new Signal('wss://test-sfu.decentraland.zone/ws', uuid())
       setSignal(signal)
+      signal._on('remoteStreams', setRemoteStreams)
+      signal._on('connected', () => signal.joinRoom('boedo'))
+      signal._on('close', () => setLocalStream(undefined))
     },
     [],
   )
 
-  const onBroadcastClick = async () => {
+  const onBroadcastClick = async (reconnect?: boolean) => {
     if (!signal) return
 
-    if (signal.localStream) {
+    if (signal.getLocalStream()) {
       return signal.unPublish()
     }
 
@@ -48,7 +48,7 @@ const Home: React.FC = () => {
       </h1>
       <Logo />
       <div className={styles.button}>
-        <Button onClick={onBroadcastClick}>
+        <Button onClick={() => onBroadcastClick()}>
           {!localStream ? 'Start broadcasting' : 'Stop' }
         </Button>
       </div>
