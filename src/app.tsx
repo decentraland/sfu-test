@@ -22,6 +22,7 @@ const Home: React.FC = () => {
       signal._on('remoteStreams', setRemoteStreams)
       signal._on('connected', () => signal.joinRoom('boedo'))
       signal._on('close', () => setLocalStream(undefined))
+
     },
     [],
   )

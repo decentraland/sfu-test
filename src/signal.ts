@@ -39,7 +39,6 @@ class Signal extends EventEmitter {
   connect() {
     this.signal = new IonSFUJSONRPCSignal(this.uri)
     this.client = new Client(this.signal)
-
     this.signal.onclose = (err) => this.handleClose(err)
     this.signal.onerror = (event) => this.handleError(event)
     this.signal.onopen = () => this.handleOnOpen()
@@ -71,6 +70,10 @@ class Signal extends EventEmitter {
   handleOnOpen() {
     console.log('connected')
     this.connected = true
+    setInterval(
+      () => this.signal.notify('', ''),
+      1000 * 60,
+    )
     this.cbQueue.forEach(promise => promise())
     this._emit('connected')
   }
