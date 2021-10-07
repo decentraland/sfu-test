@@ -39,6 +39,7 @@ class Signal extends EventEmitter {
   connect() {
     this.signal = new IonSFUJSONRPCSignal(this.uri)
     this.client = new Client(this.signal)
+    console.log(this.client)
     this.signal.onclose = (err) => this.handleClose(err)
     this.signal.onerror = (event) => this.handleError(event)
     this.signal.onopen = () => this.handleOnOpen()
@@ -124,15 +125,16 @@ class Signal extends EventEmitter {
   }
 
   setRemoteStreams(remoteStreams: RemoteStream[]) {
+    console.log({ remoteStreams })
     this.remoteStreams = remoteStreams
     this._emit('remoteStreams', this.remoteStreams)
   }
 
   handleTracks() {
     this.client.ontrack = (track, stream) => {
-      console.log({ track, stream })
       track.onunmute = () => {
         const remoteStream = this.remoteStreams.find(r => r.id === stream.id)
+
         if (!remoteStream) {
           // Add remote stream to array
           this.setRemoteStreams(this.remoteStreams.concat(stream))
