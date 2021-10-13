@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Button, Card, Logo, Label } from 'decentraland-ui'
+import { Button, Card, Logo } from 'decentraland-ui'
 
 import styles from './App.module.css'
 import { Props } from './App.types'
@@ -15,24 +15,17 @@ const App: React.FC<Props> = ({
     () => {
       onStartVoice({ url: 'wss://test-sfu.decentraland.zone/ws' })
     },
-    [onStartVoice],
+    [onStartVoice]
   )
 
   useEffect(
     () => {
       if (connected) {
-        onJoinRoom('boedo', 'asd' + Math.random())
+        onJoinRoom('boedo', Math.random() + 'BOEDOOOOOOOO' + Math.random())
       }
     },
     [connected, onJoinRoom]
   )
-
-  const onBroadcastClick = async (reconnect?: boolean) => {
-  };
-
-  if (!connected) {
-    return <div><Label>Connecting</Label></div>
-  }
 
   return (
     <div className={styles.container}>
@@ -41,8 +34,8 @@ const App: React.FC<Props> = ({
       </h1>
       <div><Logo /></div>
       <div className={styles.button}>
-        <Button onClick={() => onBroadcastClick()}>
-          {!localStream ? 'Start broadcasting' : 'Stop' }
+        <Button>
+          {!localStream ? 'Loading...' : 'Listening' }
         </Button>
       </div>
       <div className={styles.videoContainer}>

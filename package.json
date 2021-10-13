@@ -6,7 +6,7 @@
     "@types/redux-logger": "^3.0.9"
   },
   "dependencies": {
-    "@dcl/voice": "^1.0.0-20211012173609.commit-14e3f18",
+    "@dcl/voice": "^1.0.0-20211013145349.commit-bd166e4",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
