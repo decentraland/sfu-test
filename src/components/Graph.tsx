@@ -229,6 +229,15 @@ export function CurrentGraph() {
         nodes.push(`${nodeName(node)} [label=${JSON.stringify(node.nodeName + "\nglobalThis.__node_" + n)}];`);
       }
 
+      if (node instanceof MediaStreamAudioSourceNode && node.mediaStream instanceof MediaStream) {
+        if ('_videoPreMute' in node.mediaStream) {
+          nodes.push(`${nodeName(node)}_media [label=${JSON.stringify('RemoteStream')}];`);
+        } else if ('pc' in node.mediaStream) {
+          nodes.push(`${nodeName(node)}_media [label=${JSON.stringify('LocalStream')}];`);
+        }
+        nodes.push(`${nodeName(node)}_media -> ${nodeName(node)};`)
+      }
+
       (globalThis as any)["__node_" + n] = node
     }
 
