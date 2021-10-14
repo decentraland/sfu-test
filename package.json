@@ -6,8 +6,8 @@
     "@types/redux-logger": "^3.0.9"
   },
   "dependencies": {
-    "@dcl/ion-sdk-js": "^1.0.0-20211007205404.commit-9efb2a0",
-    "@dcl/voice": "^1.0.0-20211014142226.commit-8506505",
+    "@dcl/ion-sdk-js": "^1.0.0-20211014143902.commit-612456c",
+    "@dcl/voice": "^1.0.0-20211014145545.commit-0fa902c",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
