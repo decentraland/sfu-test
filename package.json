@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@dcl/ion-sdk-js": "^1.0.0-20211014143902.commit-612456c",
-    "@dcl/voice": "^1.0.0-20211014145545.commit-0fa902c",
+    "@dcl/voice": "^1.0.0-20211014205022.commit-21e049f",
     "@hpcc-js/wasm": "^1.12.4",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
