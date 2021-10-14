@@ -3,6 +3,7 @@ import { Button, Card, Logo } from 'decentraland-ui'
 
 import styles from './App.module.css'
 import { Props } from './App.types'
+import { CurrentGraph } from '../components/Graph'
 
 const App: React.FC<Props> = ({
   onJoinRoom,
@@ -35,7 +36,7 @@ const App: React.FC<Props> = ({
       <div><Logo /></div>
       <div className={styles.button}>
         <Button>
-          {!localStream ? 'Loading...' : 'Listening' }
+          {!localStream ? 'Loading...' : 'Listening'}
         </Button>
       </div>
       <div className={styles.videoContainer}>
@@ -49,6 +50,7 @@ const App: React.FC<Props> = ({
           ))}
         </Card.Group>
       </div>
+      <CurrentGraph />
     </div>
   )
 }
